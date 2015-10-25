@@ -110,7 +110,7 @@ var QuickSort = (function () {
     };
     QuickSort.prototype.partision = function (source, left, right, getPivot) {
         if (left >= right)
-            return;
+            return true;
         var i;
         var j;
         var index = getPivot(left, right, source);
@@ -120,21 +120,24 @@ var QuickSort = (function () {
         i = left + 1;
         for (j = i; j <= right; j++) {
             if (source[j] < pivot) {
-                this.swap(source, i, j);
+                this.swap(source, j, i);
                 i++;
             }
         }
         this.swap(source, index, i - 1);
         index = i - 1;
-        this.partision(source, left, index - 1, getPivot);
-        this.partision(source, index + 1, right, getPivot);
+        if (left < index - 1)
+            this.partision(source, left, index - 1, getPivot);
+        if (index + 1 < right)
+            this.partision(source, index + 1, right, getPivot);
     };
     QuickSort.prototype.swap = function (source, a, b) {
+        var tmp;
         if (a == b)
             return;
-        this.tmp = source[a];
+        tmp = source[a];
         source[a] = source[b];
-        source[b] = this.tmp;
+        source[b] = tmp;
     };
     QuickSort.getPivotMedian = function (min, max, sources) {
         if (min >= max)
@@ -155,6 +158,8 @@ var QuickSort = (function () {
         }
     };
     QuickSort.getPivotFirst = function (min, max, sources) {
+        if (min >= max)
+            throw Error('getPivotNaiveIterator min: ' + min + ' max:' + max);
         return min;
     };
     QuickSort.getPivotLast = function (min, max, sources) {
@@ -173,14 +178,108 @@ var Resource = (function () {
     Resource.loadNumbers = function (path) {
         var res = fs.readFileSync(path).toString().split("\n").map(function (value) {
             return parseInt(value);
+        }).filter(function (value, index, array) {
+            return !isNaN(value);
         });
         return res;
     };
     return Resource;
 })();
+/**
+ * Created by nick on 10/25/15.
+ */
+/*
+quicksort(A, lo, hi)
+if lo < hi
+    p = partition(A, lo, hi)
+quicksort(A, lo, p - 1)
+quicksort(A, p + 1, hi)
+
+partition(A, lo, hi)
+pivot = A[hi]
+i = lo //place for swapping
+for j = lo to hi - 1
+if A[j] <= pivot
+    swap A[i] with A[j]
+    i = i + 1
+swap A[i] with A[hi]
+    return i
+*/
+var QuickSortLomuto = (function () {
+    function QuickSortLomuto() {
+    }
+    QuickSortLomuto.prototype.sort = function (source, getPivot) {
+        if (source.length < 2)
+            return;
+        this.quicksort(source, 0, source.length - 1, getPivot);
+    };
+    QuickSortLomuto.prototype.quicksort = function (source, left, right, getPivot) {
+        if (left < right) {
+            var p = this.partition(source, left, right, getPivot);
+            this.quicksort(source, left, p - 1, getPivot);
+            this.quicksort(source, p + 1, right, getPivot);
+        }
+    };
+    QuickSortLomuto.prototype.partition = function (source, left, right, getPivot) {
+        var i;
+        var j;
+        var index = getPivot(left, right, source);
+        var pivot = source[index];
+        this.swap(source, index, right);
+        index = right;
+        i = left;
+        for (j = i; j < right; j++) {
+            if (source[j] <= pivot) {
+                this.swap(source, i, j);
+                i++;
+            }
+        }
+        this.swap(source, i, index);
+        index = i;
+        return index;
+    };
+    QuickSortLomuto.prototype.swap = function (source, a, b) {
+        var tmp;
+        if (a == b)
+            return;
+        tmp = source[a];
+        source[a] = source[b];
+        source[b] = tmp;
+    };
+    QuickSortLomuto.getPivotMedian = function (min, max, sources) {
+        if (min >= max)
+            throw Error('getPivotNaiveIterator min: ' + min + ' max:' + max);
+        var length = max - min + 1;
+        var index = min + ((length % 2 == 0) ? length / 2 - 1 : Math.floor(length / 2));
+        if (sources[index] > sources[min]) {
+            if (sources[index] < sources[max])
+                return index;
+            else
+                return (sources[min] < sources[max]) ? max : min;
+        }
+        else {
+            if (sources[min] < sources[max])
+                return min;
+            else
+                return (sources[index] > sources[max]) ? index : max;
+        }
+    };
+    QuickSortLomuto.getPivotFirst = function (min, max, sources) {
+        if (min >= max)
+            throw Error('getPivotNaiveIterator min: ' + min + ' max:' + max);
+        return min;
+    };
+    QuickSortLomuto.getPivotLast = function (min, max, sources) {
+        if (min >= max)
+            throw Error('getPivotNaiveIterator min: ' + min + ' max:' + max);
+        return max;
+    };
+    return QuickSortLomuto;
+})();
 ///<reference path="week1/Inversions.ts"/>
 ///<reference path="week2/QuickSort.ts"/>
 ///<reference path="util/Resource.ts"/>
+///<reference path="week2/QuickSortLomuto.ts"/>
 var App = (function () {
     function App() {
         //var ex1:Inversions = new Inversions();
@@ -188,25 +287,37 @@ var App = (function () {
         this.week2();
     }
     App.prototype.week2 = function () {
+        var src = Resource.loadNumbers('resources/IntegerArray.txt');
+        console.log('length is ' + src.length);
+        console.log('done.');
         var sort = new QuickSort();
         var comparisons = 0;
-        sort.sort(Resource.loadNumbers('resources/QuickSort.txt'), function (min, max, sources) {
+        sort.sort(this.getTestArr(), function (min, max, sources) {
             comparisons += max - min;
             return QuickSort.getPivotFirst(min, max, sources);
         });
         console.log('QuickSort with the first pivot: ' + comparisons);
-        /*comparisons = 0;
-        sort.sort(Resource.loadNumbers('resources/QuickSort.txt'), (min:number, max:number, sources:number[]):number => {
+        comparisons = 0;
+        sort.sort(this.getTestArr(), function (min, max, sources) {
             comparisons += max - min;
             return QuickSort.getPivotLast(min, max, sources);
         });
-        console.log('QuickSort with the last pivot: '+comparisons);
+        console.log('QuickSort with the last pivot: ' + comparisons);
         comparisons = 0;
-        sort.sort(Resource.loadNumbers('resources/QuickSort.txt'), (min:number, max:number, sources:number[]):number => {
+        sort.sort(this.getTestArr(), function (min, max, sources) {
             comparisons += max - min;
             return QuickSort.getPivotMedian(min, max, sources);
         });
-        console.log('QuickSort with a median pivot: '+comparisons);*/
+        console.log('QuickSort with a median pivot: ' + comparisons);
+    };
+    App.prototype.getTestArr = function () {
+        return Resource.loadNumbers('resources/QuickSort.txt');
+        return Resource.loadNumbers('resources/IntegerArray.txt');
+        var testArr = [];
+        for (var i = 1; i <= 1000; i++) {
+            testArr.push(i);
+        }
+        return testArr;
     };
     return App;
 })();

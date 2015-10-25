@@ -4,11 +4,13 @@
 ///<reference path="../../src/week2/QuickSort.ts"/>
 ///<reference path="../../typings/jasmine/jasmine.d.ts"/>
 ///<reference path="../../src/util/Resource.ts"/>
+///<reference path="../../src/week2/QuickSortLomuto.ts"/>
 var fs = require('fs');
 var app = fs.readFileSync('build/app.js', 'utf-8'); // depends on the file encoding
 eval(app);
 describe("Week 2", function () {
     var sort = new QuickSort();
+    //var sort:QuickSortLomuto = new QuickSortLomuto();
     var data = [
         { source: [1, 3, 5, 2, 4, 6], result: [1, 2, 3, 4, 5, 6] }
     ];
@@ -124,6 +126,30 @@ describe("Week 2", function () {
             return QuickSort.getPivotMedian(min, max, sources);
         });
         expect(comparisons).toEqual(8921);
+    });
+    it("QuickSort with the first pivot for IntegerArray", function () {
+        var comparisons = 0;
+        sort.sort(Resource.loadNumbers('resources/IntegerArray.txt'), function (min, max, sources) {
+            comparisons += max - min;
+            return QuickSort.getPivotFirst(min, max, sources);
+        });
+        expect(comparisons).toEqual(1954287);
+    });
+    it("QuickSort with the last pivot for IntegerArray", function () {
+        var comparisons = 0;
+        sort.sort(Resource.loadNumbers('resources/IntegerArray.txt'), function (min, max, sources) {
+            comparisons += max - min;
+            return QuickSort.getPivotLast(min, max, sources);
+        });
+        expect(comparisons).toEqual(2047196);
+    });
+    it("QuickSort with a midian pivot for IntegerArray", function () {
+        var comparisons = 0;
+        sort.sort(Resource.loadNumbers('resources/IntegerArray.txt'), function (min, max, sources) {
+            comparisons += max - min;
+            return QuickSort.getPivotMedian(min, max, sources);
+        });
+        expect(comparisons).toEqual(1697653);
     });
 });
 var getRandonArray = function (length, strict) {

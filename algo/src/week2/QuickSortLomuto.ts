@@ -1,36 +1,60 @@
 /**
- * Created by nick on 10/23/15.
+ * Created by nick on 10/25/15.
  */
 
-class QuickSort{
+/*
+quicksort(A, lo, hi)
+if lo < hi
+    p = partition(A, lo, hi)
+quicksort(A, lo, p - 1)
+quicksort(A, p + 1, hi)
+
+partition(A, lo, hi)
+pivot = A[hi]
+i = lo //place for swapping
+for j = lo to hi - 1
+if A[j] <= pivot
+    swap A[i] with A[j]
+    i = i + 1
+swap A[i] with A[hi]
+    return i
+*/
+
+class QuickSortLomuto{
     public sort(source:number[], getPivot:Function):void {
         if(source.length < 2) return;
-        this.partision(source, 0, source.length - 1, getPivot);
+        this.quicksort(source, 0, source.length - 1, getPivot);
     }
 
-    private partision(source:number[], left:number, right:number, getPivot:Function):boolean{
-        if (left >= right) return true;
+    private quicksort(source:number[], left:number, right:number, getPivot:Function):void{
+        if (left < right) {
+            var p:number = this.partition(source, left, right, getPivot);
+            this.quicksort(source, left, p - 1, getPivot);
+            this.quicksort(source, p + 1, right,getPivot);
+        }
+    }
+
+    private partition(source:number[], left:number, right:number, getPivot:Function):number{
 
         var i:number;
         var j:number;
         var index:number = getPivot(left, right, source);
         var pivot:number = source[index];
 
-        this.swap(source, index, left);
-        index = left;
-        i = left + 1;
-        for(j = i; j <= right; j++){
-            if(source[j] < pivot) {
-                this.swap(source, j, i);
+        this.swap(source, index, right);
+        index = right;
+        i = left;
+        for(j = i; j < right; j++){
+            if(source[j] <= pivot) {
+                this.swap(source, i, j);
                 i++;
             }
         }
 
-        this.swap(source, index, i - 1);
-        index = i - 1;
+        this.swap(source, i, index);
+        index = i;
 
-        if(left < index - 1) this.partision(source, left, index - 1, getPivot);
-        if(index + 1 < right) this.partision(source, index + 1, right, getPivot);
+        return index;
     }
 
     public debug:Function;

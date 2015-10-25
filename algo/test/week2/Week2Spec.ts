@@ -5,6 +5,8 @@
 ///<reference path="../../src/week2/QuickSort.ts"/>
 ///<reference path="../../typings/jasmine/jasmine.d.ts"/>
 ///<reference path="../../src/util/Resource.ts"/>
+///<reference path="../../src/week2/QuickSortLomuto.ts"/>
+    
 
 
 var fs = require('fs');
@@ -14,6 +16,7 @@ eval(app);
 
 describe("Week 2", () => {
     var sort:QuickSort = new QuickSort();
+    //var sort:QuickSortLomuto = new QuickSortLomuto();
     var data = [
         {source: [1, 3, 5, 2, 4, 6], result: [1,2,3,4,5,6]}
         ];
@@ -141,6 +144,31 @@ describe("Week 2", () => {
             return QuickSort.getPivotMedian(min, max, sources);
         });
         expect(comparisons).toEqual(8921);
+    });
+
+    it("QuickSort with the first pivot for IntegerArray", function () {
+        var comparisons:number = 0;
+        sort.sort(Resource.loadNumbers('resources/IntegerArray.txt'), (min:number, max:number, sources:number[]):number => {
+            comparisons += max - min;
+            return QuickSort.getPivotFirst(min, max, sources);
+        });
+        expect(comparisons).toEqual(1954287);
+    });
+    it("QuickSort with the last pivot for IntegerArray", function () {
+        var comparisons:number = 0;
+        sort.sort(Resource.loadNumbers('resources/IntegerArray.txt'), (min:number, max:number, sources:number[]):number => {
+            comparisons += max - min;
+            return QuickSort.getPivotLast(min, max, sources);
+        });
+        expect(comparisons).toEqual(2047196);
+    });
+    it("QuickSort with a midian pivot for IntegerArray", function () {
+        var comparisons:number = 0;
+        sort.sort(Resource.loadNumbers('resources/IntegerArray.txt'), (min:number, max:number, sources:number[]):number => {
+            comparisons += max - min;
+            return QuickSort.getPivotMedian(min, max, sources);
+        });
+        expect(comparisons).toEqual(1697653);
     });
 });
 
