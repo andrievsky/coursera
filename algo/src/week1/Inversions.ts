@@ -22,7 +22,7 @@ class Inversions{
 
     runFromSource(input:number[]):number {
         input.forEach((value:number, index:number, src:number[]) => {
-           if (typeof(value) != 'number') console.log(value +" is NAN !!!");
+           if (typeof(value) != 'number') console.log(value +" type is NAN");
         });
         this.iterations = 0;
         this.calculate(input);

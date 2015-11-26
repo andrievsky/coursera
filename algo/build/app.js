@@ -72,7 +72,7 @@ var Inversions = (function () {
     Inversions.prototype.runFromSource = function (input) {
         input.forEach(function (value, index, src) {
             if (typeof (value) != 'number')
-                console.log(value + " is NAN !!!");
+                console.log(value + " type is NAN");
         });
         this.iterations = 0;
         this.calculate(input);
@@ -183,6 +183,20 @@ var Resource = (function () {
         });
         return res;
     };
+    Resource.loadGraph = function (path) {
+        var res = fs.readFileSync(path).toString().split('\n')
+            .map(function (row) {
+            return row.split('\t')
+                .map(function (value, index, array) {
+                return parseInt(value);
+            }).filter(function (value, index, array) {
+                return !isNaN(value);
+            });
+        }).filter(function (row) {
+            return row.length > 0;
+        });
+        return res;
+    };
     return Resource;
 })();
 /**
@@ -276,16 +290,121 @@ var QuickSortLomuto = (function () {
     };
     return QuickSortLomuto;
 })();
+/**
+ * Created by nick on 11/9/15.
+ */
+var Edge = (function () {
+    function Edge(vertexA, vertexB) {
+        this.vertexA = vertexA;
+        this.vertexB = vertexB;
+    }
+    return Edge;
+})();
+/**
+ * Created by nick on 11/9/15.
+ */
+///<reference path="Edge.ts"/>
+var Vertex = (function () {
+    function Vertex() {
+        this.edges = {};
+    }
+    return Vertex;
+})();
+/**
+ * Created by nick on 11/9/15.
+ */
+///<reference path="Edge.ts"/>
+///<reference path="Vertex.ts"/>
+var NGraph = (function () {
+    function NGraph() {
+        this.vertices = [];
+        this.edges = [];
+        this.length = 0;
+    }
+    NGraph.prototype.addVertex = function (id) {
+        var vertex = new Vertex();
+        vertex.id = id;
+        this.vertices[id] = vertex;
+    };
+    NGraph.prototype.addEdge = function (vertexA, vertexB) {
+        if (this.vertices[vertexA].edges[vertexB])
+            return;
+        var edge = new Edge(vertexA, vertexB);
+        this.vertices[vertexA].edges[vertexB] = edge;
+        this.vertices[vertexB].edges[vertexA] = edge;
+        this.edges.push(edge);
+        this.length++;
+    };
+    NGraph.prototype.removeRandomEdge = function () {
+        var eid = Math.round(Math.random() * (this.edges.length - 1));
+        var edge = this.edges[eid];
+        delete this.vertices[edge.vertexA].edges[edge.vertexB];
+        delete this.vertices[edge.vertexB].edges[edge.vertexA];
+        this.edges.splice(eid, 1);
+        for (var i in this.vertices[edge.vertexB].edges) {
+            this.vertices[edge.vertexB].edges[i];
+        }
+    };
+    NGraph.prototype.updateVertex = function (form, to) {
+    };
+    NGraph.prototype.isJoined = function () {
+        for (var i = 0; i < this.vertices.length; i++) {
+        }
+    };
+    NGraph.prototype.findMinCut = function () {
+        var res = Number.MAX_VALUE;
+        var graph;
+        graph = this.clone();
+        for (var i = 0; i < this.length - 2; i++) {
+            graph.removeRandomEdge();
+        }
+        console.log(this.vertices);
+        console.log(this.edges);
+        console.log('===================================');
+        console.log(graph.vertices);
+        console.log(graph.edges);
+        return res;
+    };
+    NGraph.prototype.clone = function () {
+        return NGraph.create(this.source);
+    };
+    NGraph.create = function (source) {
+        var graph = new NGraph();
+        source.forEach(function (value, index, array) {
+            //console.log(value)
+            graph.addVertex(value[0].toString());
+        });
+        source.forEach(function (value, index, array) {
+            for (var i = 1; i < value.length; i++) {
+                graph.addEdge(value[0].toString(), value[i].toString());
+            }
+        });
+        graph.source = source;
+        return graph;
+    };
+    return NGraph;
+})();
 ///<reference path="week1/Inversions.ts"/>
 ///<reference path="week2/QuickSort.ts"/>
 ///<reference path="util/Resource.ts"/>
 ///<reference path="week2/QuickSortLomuto.ts"/>
+///<reference path="week3/NGraph.ts"/>
 var App = (function () {
     function App() {
         //var ex1:Inversions = new Inversions();
         //ex1.run();
-        this.week2();
+        //this.week2();
+        this.week3();
     }
+    App.prototype.week3 = function () {
+        var src = Resource.loadGraph('resources/kargerMinCut.txt');
+        //console.log(src);
+        var testSource = [[1, 2, 3], [2, 1, 3, 4], [3, 1, 2, 4], [4, 2, 3]];
+        var graph = NGraph.create(testSource);
+        graph.findMinCut();
+        //var graph:NGraph = NGraph.create(src);
+        //console.log(graph);
+    };
     App.prototype.week2 = function () {
         var src = Resource.loadNumbers('resources/IntegerArray.txt');
         console.log('length is ' + src.length);
