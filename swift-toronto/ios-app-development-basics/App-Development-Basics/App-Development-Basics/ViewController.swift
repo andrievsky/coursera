@@ -8,26 +8,32 @@
 
 import UIKit
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, ImageStateDelegate, ProcessedImageViewDelegate {
 
-    @IBOutlet var imageView: UIImageView!
-    @IBOutlet var filterView: UIButton!
-    @IBOutlet var compareView: UIButton!
-    
+    @IBOutlet var sourceImageView: UIImageView!
+    @IBOutlet var processedImageView: ProcessedImageView!
     @IBOutlet var bottomView: UIStackView!
+    
+    @IBOutlet var filterButton: UIButton!
+    @IBOutlet var compareButton: UIButton!
+    @IBOutlet var shareButton: UIButton!
     @IBOutlet var filtersView: UIView!
-
+    @IBOutlet var overlayLabel: UILabel!
+    
+    var state:ImageState = ImageState()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
-        imageView.image = UIImage(named: "nong-khai")
+
+        sourceImageView.image = UIImage(named: "nong-khai")
        
         // Setup filters menu
         filtersView.translatesAutoresizingMaskIntoConstraints = false
         filtersView.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)
-        
+        processedImageView.delegate = self
+        state.delegate = self
+        state.update()
 
     }
 
@@ -36,7 +42,34 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         // Dispose of any resources that can be recreated.
     }
-
+    
+    func changedState(state: ImageStateProperty, previousState: ImageStateProperty) {
+        switch state {
+        case .Init:
+            shareButton?.enabled = false
+            compareButton?.enabled = false
+            processedImageView?.hidden = true
+            overlayLabel.hidden = true
+        case .Filter:
+            shareButton?.enabled = true
+            compareButton?.enabled = true
+            processedImageView?.hidden = false
+            if previousState == .Compare {
+                processedImageView.show()
+            }
+        case .Compare:
+            processedImageView.hide()
+        default: return
+        }
+    }
+    
+    func processedImageViewHide(view: ProcessedImageView) {
+        overlayLabel.hidden = false
+    }
+    
+    func processedImageViewShow(view: ProcessedImageView) {
+        overlayLabel.hidden = true
+    }
     
     @IBAction func onFilter(sender: UIButton) {
         if(sender.selected){
@@ -91,7 +124,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         present(picker)
     }
     
-    
     func showAlbum(action: UIAlertAction?){
         let picker = UIImagePickerController()
         picker.delegate = self
@@ -103,22 +135,28 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         presentViewController(viewController, animated: true, completion: nil)
     }
     
-    
-    
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         dismissViewControllerAnimated(true, completion: nil)
-        imageView.image = info[UIImagePickerControllerOriginalImage] as? UIImage
+        processedImageView.image = info[UIImagePickerControllerOriginalImage] as? UIImage
+        state.change(.Filter)
     }
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
         dismissViewControllerAnimated(true, completion: nil)
     }
     
-    
     @IBAction func onCompare(sender: UIButton) {
+        if(sender.selected){
+            sender.selected = false
+            state.change(.Filter)
+        } else {
+            sender.selected = true
+            state.change(.Compare)
+        }
     }
+    
     @IBAction func onShare(sender: UIButton) {
-        let activityController = UIActivityViewController(activityItems: ["Some text here!", imageView.image!], applicationActivities: nil)
+        let activityController = UIActivityViewController(activityItems: ["Some text here!", sourceImageView.image!], applicationActivities: nil)
         activityController.popoverPresentationController?.sourceView = sender
         activityController.popoverPresentationController?.sourceRect = sender.bounds
         presentViewController(activityController, animated: true, completion: nil)
