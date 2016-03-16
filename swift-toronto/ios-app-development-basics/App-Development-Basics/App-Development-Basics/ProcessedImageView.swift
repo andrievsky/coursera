@@ -25,17 +25,25 @@ public class ProcessedImageView: UIImageView {
     }
     
     public func show(){
-        UIView.animateWithDuration(0.4, animations: {
+        UIView.animateWithDuration(0.3, animations: {
             self.alpha = 1.0
         })
         delegate?.processedImageViewShow(self)
     }
     
     public func hide(){
-        UIView.animateWithDuration(0.4, animations: {
+        UIView.animateWithDuration(0.3, animations: {
             self.alpha = 0.0
         })
         delegate?.processedImageViewHide(self)
+    }
+    
+    public func isReady() -> Bool{
+        return image != nil
+    }
+    
+    public func clear(){
+        image = nil
     }
 
 }

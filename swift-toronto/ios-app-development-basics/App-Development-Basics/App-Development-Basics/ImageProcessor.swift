@@ -24,7 +24,6 @@ public enum Filter{
             return RedContrastFilter.TITLE
         case .GaussianBlur:
             return GaussianBlurFilter.TITLE
-        default: return ""
         }
     }
 }

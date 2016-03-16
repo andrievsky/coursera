@@ -21,6 +21,7 @@
 		01EBB0131C9887C00026590D /* ProcessedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EBB0121C9887C00026590D /* ProcessedImageView.swift */; };
 		01EBB0151C9965460026590D /* FilterViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EBB0141C9965460026590D /* FilterViewCell.swift */; };
 		01EBB0191C997B830026590D /* ImageUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EBB0181C997B830026590D /* ImageUtil.swift */; };
+		01EBB01B1C99C16B0026590D /* AdditionalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EBB01A1C99C16B0026590D /* AdditionalView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +41,7 @@
 		01EBB0121C9887C00026590D /* ProcessedImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProcessedImageView.swift; sourceTree = "<group>"; };
 		01EBB0141C9965460026590D /* FilterViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterViewCell.swift; sourceTree = "<group>"; };
 		01EBB0181C997B830026590D /* ImageUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageUtil.swift; sourceTree = "<group>"; };
+		01EBB01A1C99C16B0026590D /* AdditionalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdditionalView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +89,7 @@
 				01EBB0121C9887C00026590D /* ProcessedImageView.swift */,
 				01EBB0141C9965460026590D /* FilterViewCell.swift */,
 				01EBB0181C997B830026590D /* ImageUtil.swift */,
+				01EBB01A1C99C16B0026590D /* AdditionalView.swift */,
 			);
 			path = "App-Development-Basics";
 			sourceTree = "<group>";
@@ -174,6 +177,7 @@
 				01CF6F881C8AECEB005E13EF /* RGBAImage.swift in Sources */,
 				01CF6F871C8AECEB005E13EF /* RedContrastFilter.swift in Sources */,
 				01EBB0151C9965460026590D /* FilterViewCell.swift in Sources */,
+				01EBB01B1C99C16B0026590D /* AdditionalView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

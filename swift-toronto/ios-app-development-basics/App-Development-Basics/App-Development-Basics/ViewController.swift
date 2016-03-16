@@ -8,17 +8,21 @@
 
 import UIKit
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, ImageStateDelegate, ProcessedImageViewDelegate {
+class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, ImageStateDelegate, ProcessedImageViewDelegate, UICollectionViewDelegate {
 
     @IBOutlet var sourceImageView: UIImageView!
     @IBOutlet var processedImageView: ProcessedImageView!
     @IBOutlet var bottomView: UIStackView!
+    @IBOutlet var editView: UIView!
+    @IBOutlet var additionalView: AdditionalView!
     
     @IBOutlet var filterButton: UIButton!
+    @IBOutlet var editButton: UIButton!
     @IBOutlet var compareButton: UIButton!
     @IBOutlet var shareButton: UIButton!
     @IBOutlet var filtersView: UIView!
     @IBOutlet var overlayLabel: UILabel!
+    
     
     var state:ImageState = ImageState()
     var imageProcessor = ImageProcessor(image: UIImage(named: "nong-khai")!)
@@ -29,20 +33,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 
         sourceImageView.image = UIImage(named: "nong-khai")
        
-        // Setup filters menu
-        filtersView.translatesAutoresizingMaskIntoConstraints = false
-        filtersView.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)
         processedImageView.delegate = self
         state.delegate = self
         state.update()
 
-    }
-    
-    func applyFilter(filter:Filter){
-        imageProcessor.addFilter(preset: filter)
-        processedImageView.image = imageProcessor.toUIImage()
-        state.change(.Filter)
-        
     }
 
     override func didReceiveMemoryWarning() {
@@ -51,25 +45,38 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         // Dispose of any resources that can be recreated.
     }
     
+    // States Handling
+    
     func changedState(state: ImageStateProperty, previousState: ImageStateProperty) {
+        print("\(state) <- \(previousState)")
+        shareButton?.enabled = processedImageView.isReady()
+        compareButton?.enabled = processedImageView.isReady()
+        compareButton.selected = state == .Compare
+        processedImageView?.hidden = state == .Init
+        overlayLabel.hidden = state == .Init
+        filterButton.selected = state == .Filters
+        editButton.selected = state == .Edit
+
+        if previousState == .Compare {
+            processedImageView.show()
+        }
+        
         switch state {
         case .Init:
-            shareButton?.enabled = false
-            compareButton?.enabled = false
-            processedImageView?.hidden = true
-            overlayLabel.hidden = true
-        case .Filter:
-            shareButton?.enabled = true
-            compareButton?.enabled = true
-            processedImageView?.hidden = false
-            if previousState == .Compare {
-                processedImageView.show()
+            return
+        case .Ready:
+            if additionalView.isOpen(){
+                additionalView.close()
             }
+        case .Filters:
+            return
         case .Compare:
             processedImageView.hide()
         default: return
         }
     }
+    
+    // Image View Delegate
     
     func processedImageViewHide(view: ProcessedImageView) {
         overlayLabel.hidden = false
@@ -79,40 +86,15 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         overlayLabel.hidden = true
     }
     
+    // Filters Handling
+    
     @IBAction func onFilter(sender: UIButton) {
         if(sender.selected){
-            sender.selected = false
-            hideFiltersMenu()
+            state.change(.Ready)
         } else {
-            sender.selected = true
-            showFiltersMenu()
+            additionalView!.open(filtersView)
+            state.change(.Filters)
         }
-    }
-    
-    func showFiltersMenu(){
-        view.addSubview(filtersView)
-        
-        let leftConstraint = filtersView.leftAnchor.constraintEqualToAnchor(view.leftAnchor)
-        let rightConstraint = filtersView.rightAnchor.constraintEqualToAnchor(view.rightAnchor)
-        let bottomConstraint = filtersView.bottomAnchor.constraintEqualToAnchor(bottomView.topAnchor)
-        let heightConstraint = filtersView.heightAnchor.constraintEqualToConstant(128)
-        NSLayoutConstraint.activateConstraints([leftConstraint, rightConstraint, bottomConstraint, heightConstraint])
-        view.layoutIfNeeded()
-        filtersView.alpha = 0.0
-        UIView.animateWithDuration(0.3, animations: {
-            self.filtersView.alpha = 1.0
-        })
-    }
-    
-    func hideFiltersMenu(){
-        UIView.animateWithDuration(0.3, animations: {
-            self.filtersView.alpha = 0.0
-            }, completion: {
-                (finished:Bool) in
-                if(finished) {
-                    self.filtersView.removeFromSuperview()
-                }
-        })
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int{
@@ -140,6 +122,18 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         return cellView
         
     }
+    
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath){
+        imageProcessor.addFilter(preset: filtersList[indexPath.row])
+        updateProcessedImage()
+        state.change(.Ready)
+    }
+    
+    func updateProcessedImage(){
+        processedImageView.image = imageProcessor.toUIImage()
+    }
+    
+    // New Photo Menu and Delegate
     
     @IBAction func onNewPhoto(sender: UIButton) {
         let actionSheet = UIAlertController(title: "New Photo", message: nil, preferredStyle: .ActionSheet)
@@ -172,23 +166,24 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         dismissViewControllerAnimated(true, completion: nil)
         processedImageView.image = info[UIImagePickerControllerOriginalImage] as? UIImage
-        state.change(.Filter)
+        state.change(.Ready)
     }
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
         dismissViewControllerAnimated(true, completion: nil)
     }
     
+    // Compare Handling
     
     @IBAction func onCompare(sender: UIButton) {
         if(sender.selected){
-            sender.selected = false
-            state.change(.Filter)
+            state.change(.Ready)
         } else {
-            sender.selected = true
             state.change(.Compare)
         }
     }
+    
+    // Share Handling
     
     @IBAction func onShare(sender: UIButton) {
         let activityController = UIActivityViewController(activityItems: ["Some text here!", sourceImageView.image!], applicationActivities: nil)
@@ -196,6 +191,20 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         activityController.popoverPresentationController?.sourceRect = sender.bounds
         presentViewController(activityController, animated: true, completion: nil)
     }
+    
+    // Edit Handling
+    
+    @IBAction func onEdit(sender: UIButton) {
+        if(sender.selected){
+            state.change(.Ready)
+        } else {
+            additionalView!.open(editView)
+            state.change(.Edit)
+        }
+    }
 
+    @IBAction func onEditChaged(sender: UISlider) {
+        print(sender.value)
+    }
 }
 
