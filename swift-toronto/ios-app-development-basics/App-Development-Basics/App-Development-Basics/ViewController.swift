@@ -21,6 +21,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet var overlayLabel: UILabel!
     
     var state:ImageState = ImageState()
+    var imageProcessor = ImageProcessor(image: UIImage(named: "nong-khai")!)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,6 +36,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         state.delegate = self
         state.update()
 
+    }
+    
+    func applyFilter(filter:Filter){
+        imageProcessor.addFilter(preset: filter)
+        processedImageView.image = imageProcessor.toUIImage()
+        state.change(.Filter)
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -87,7 +95,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let leftConstraint = filtersView.leftAnchor.constraintEqualToAnchor(view.leftAnchor)
         let rightConstraint = filtersView.rightAnchor.constraintEqualToAnchor(view.rightAnchor)
         let bottomConstraint = filtersView.bottomAnchor.constraintEqualToAnchor(bottomView.topAnchor)
-        let heightConstraint = filtersView.heightAnchor.constraintEqualToConstant(44)
+        let heightConstraint = filtersView.heightAnchor.constraintEqualToConstant(128)
         NSLayoutConstraint.activateConstraints([leftConstraint, rightConstraint, bottomConstraint, heightConstraint])
         view.layoutIfNeeded()
         filtersView.alpha = 0.0
@@ -105,6 +113,32 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                     self.filtersView.removeFromSuperview()
                 }
         })
+    }
+    
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int{
+        return ImageProcessor.FILTERS.count
+    }
+    
+    let filtersList = [
+        Filter.RedContrast,
+        Filter.GaussianBlur
+    
+    ]
+    
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell{
+        let cellView:UICollectionViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("FilterViewCell", forIndexPath: indexPath)
+        
+        var image = UIImage(named: "nong-khai")
+        let size = CGSize(width: 80, height: 80)
+        image = ImageUtil.resize(&image!, sizeChange: size)
+        let imageProcessor = ImageProcessor(image: image!)
+        let filter = filtersList[indexPath.row]
+        imageProcessor.addFilter(preset: filter)
+        (cellView as! FilterViewCell).imageView.image = imageProcessor.toUIImage()
+        (cellView as! FilterViewCell).title.text = Filter.getTitle(filter)
+        
+        return cellView
+        
     }
     
     @IBAction func onNewPhoto(sender: UIButton) {
@@ -144,6 +178,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
         dismissViewControllerAnimated(true, completion: nil)
     }
+    
     
     @IBAction func onCompare(sender: UIButton) {
         if(sender.selected){

@@ -12,7 +12,6 @@
 		01CF6F731C8AECC8005E13EF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 01CF6F711C8AECC8005E13EF /* Main.storyboard */; };
 		01CF6F751C8AECC8005E13EF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 01CF6F741C8AECC8005E13EF /* Assets.xcassets */; };
 		01CF6F781C8AECC8005E13EF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 01CF6F761C8AECC8005E13EF /* LaunchScreen.storyboard */; };
-		01CF6F841C8AECEB005E13EF /* Filtering.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CF6F7F1C8AECEB005E13EF /* Filtering.swift */; };
 		01CF6F851C8AECEB005E13EF /* GaussianBlurFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CF6F801C8AECEB005E13EF /* GaussianBlurFilter.swift */; };
 		01CF6F861C8AECEB005E13EF /* ImageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CF6F811C8AECEB005E13EF /* ImageProcessor.swift */; };
 		01CF6F871C8AECEB005E13EF /* RedContrastFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CF6F821C8AECEB005E13EF /* RedContrastFilter.swift */; };
@@ -20,6 +19,8 @@
 		01EBB00F1C9343990026590D /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EBB00E1C9343990026590D /* TableViewController.swift */; };
 		01EBB0111C98350E0026590D /* ImageState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EBB0101C98350E0026590D /* ImageState.swift */; };
 		01EBB0131C9887C00026590D /* ProcessedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EBB0121C9887C00026590D /* ProcessedImageView.swift */; };
+		01EBB0151C9965460026590D /* FilterViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EBB0141C9965460026590D /* FilterViewCell.swift */; };
+		01EBB0191C997B830026590D /* ImageUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EBB0181C997B830026590D /* ImageUtil.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,7 +31,6 @@
 		01CF6F741C8AECC8005E13EF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		01CF6F771C8AECC8005E13EF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		01CF6F791C8AECC8005E13EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		01CF6F7F1C8AECEB005E13EF /* Filtering.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filtering.swift; sourceTree = "<group>"; };
 		01CF6F801C8AECEB005E13EF /* GaussianBlurFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GaussianBlurFilter.swift; sourceTree = "<group>"; };
 		01CF6F811C8AECEB005E13EF /* ImageProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageProcessor.swift; sourceTree = "<group>"; };
 		01CF6F821C8AECEB005E13EF /* RedContrastFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RedContrastFilter.swift; sourceTree = "<group>"; };
@@ -38,6 +38,8 @@
 		01EBB00E1C9343990026590D /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		01EBB0101C98350E0026590D /* ImageState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageState.swift; sourceTree = "<group>"; };
 		01EBB0121C9887C00026590D /* ProcessedImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProcessedImageView.swift; sourceTree = "<group>"; };
+		01EBB0141C9965460026590D /* FilterViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterViewCell.swift; sourceTree = "<group>"; };
+		01EBB0181C997B830026590D /* ImageUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageUtil.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,7 +72,6 @@
 		01CF6F6C1C8AECC8005E13EF /* App-Development-Basics */ = {
 			isa = PBXGroup;
 			children = (
-				01CF6F7F1C8AECEB005E13EF /* Filtering.swift */,
 				01CF6F801C8AECEB005E13EF /* GaussianBlurFilter.swift */,
 				01CF6F811C8AECEB005E13EF /* ImageProcessor.swift */,
 				01CF6F821C8AECEB005E13EF /* RedContrastFilter.swift */,
@@ -84,6 +85,8 @@
 				01EBB00E1C9343990026590D /* TableViewController.swift */,
 				01EBB0101C98350E0026590D /* ImageState.swift */,
 				01EBB0121C9887C00026590D /* ProcessedImageView.swift */,
+				01EBB0141C9965460026590D /* FilterViewCell.swift */,
+				01EBB0181C997B830026590D /* ImageUtil.swift */,
 			);
 			path = "App-Development-Basics";
 			sourceTree = "<group>";
@@ -165,11 +168,12 @@
 				01CF6F851C8AECEB005E13EF /* GaussianBlurFilter.swift in Sources */,
 				01CF6F861C8AECEB005E13EF /* ImageProcessor.swift in Sources */,
 				01EBB00F1C9343990026590D /* TableViewController.swift in Sources */,
-				01CF6F841C8AECEB005E13EF /* Filtering.swift in Sources */,
 				01CF6F6E1C8AECC8005E13EF /* AppDelegate.swift in Sources */,
+				01EBB0191C997B830026590D /* ImageUtil.swift in Sources */,
 				01EBB0131C9887C00026590D /* ProcessedImageView.swift in Sources */,
 				01CF6F881C8AECEB005E13EF /* RGBAImage.swift in Sources */,
 				01CF6F871C8AECEB005E13EF /* RedContrastFilter.swift in Sources */,
+				01EBB0151C9965460026590D /* FilterViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

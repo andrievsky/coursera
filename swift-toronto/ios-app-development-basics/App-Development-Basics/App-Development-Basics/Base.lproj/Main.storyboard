@@ -111,7 +111,7 @@
                         <outlet property="bottomView" destination="nZE-Bi-Ubm" id="Wct-s7-h2S"/>
                         <outlet property="compareButton" destination="3za-6r-dcO" id="tZF-1B-9Xl"/>
                         <outlet property="filterButton" destination="DgF-Un-1Eg" id="eJ9-qR-kuF"/>
-                        <outlet property="filtersView" destination="rVd-eF-2Ph" id="imM-8G-7tz"/>
+                        <outlet property="filtersView" destination="gU6-Ei-fS9" id="fx9-8Y-RUf"/>
                         <outlet property="overlayLabel" destination="pby-xc-d78" id="kmh-gv-oNN"/>
                         <outlet property="processedImageView" destination="TBP-ZQ-brk" id="9Pq-ir-bvK"/>
                         <outlet property="shareButton" destination="5Kh-Uh-bg8" id="q3Z-58-UyY"/>
@@ -119,43 +119,55 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <view contentMode="scaleToFill" id="rVd-eF-2Ph">
-                    <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
+                <view contentMode="scaleToFill" id="gU6-Ei-fS9">
+                    <rect key="frame" x="0.0" y="0.0" width="314" height="128"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <subviews>
-                        <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="1Wb-Qu-7U4">
-                            <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
-                            <subviews>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ItO-0x-Eru">
-                                    <rect key="frame" x="0.0" y="0.0" width="40" height="128"/>
-                                    <state key="normal" title="Red"/>
-                                </button>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="x0y-wA-f78">
-                                    <rect key="frame" x="40" y="0.0" width="55" height="128"/>
-                                    <state key="normal" title="Green"/>
-                                </button>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cow-p0-8Kn">
-                                    <rect key="frame" x="95" y="0.0" width="42" height="128"/>
-                                    <state key="normal" title="Blue"/>
-                                </button>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RD5-ax-ka1">
-                                    <rect key="frame" x="137" y="0.0" width="50" height="128"/>
-                                    <state key="normal" title="Blur 1"/>
-                                </button>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VbD-Qr-TBG">
-                                    <rect key="frame" x="187" y="0.0" width="53" height="128"/>
-                                    <state key="normal" title="Blur 2"/>
-                                </button>
-                            </subviews>
-                            <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                        </stackView>
+                        <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="K77-NA-IJy">
+                            <rect key="frame" x="0.0" y="0.0" width="314" height="128"/>
+                            <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="1RQ-Zn-eG9">
+                                <size key="itemSize" width="120" height="120"/>
+                                <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                            </collectionViewFlowLayout>
+                            <cells>
+                                <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="FilterViewCell" id="wiH-bs-hMg" customClass="FilterViewCell" customModule="App_Development_Basics" customModuleProvider="target">
+                                    <rect key="frame" x="0.0" y="4" width="120" height="120"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                        <rect key="frame" x="0.0" y="0.0" width="120" height="120"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <subviews>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="79l-pa-MFv">
+                                                <rect key="frame" x="20" y="8" width="80" height="80"/>
+                                            </imageView>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PZd-GY-wgd">
+                                                <rect key="frame" x="39" y="93" width="42" height="21"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                    </view>
+                                    <connections>
+                                        <outlet property="imageView" destination="79l-pa-MFv" id="N9j-kg-mHL"/>
+                                        <outlet property="title" destination="PZd-GY-wgd" id="7yy-bC-U6e"/>
+                                    </connections>
+                                </collectionViewCell>
+                            </cells>
+                            <connections>
+                                <outlet property="dataSource" destination="BYZ-38-t0r" id="na8-kF-2gt"/>
+                            </connections>
+                        </collectionView>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
-                        <constraint firstAttribute="bottom" secondItem="1Wb-Qu-7U4" secondAttribute="bottom" id="sVW-bf-JKq"/>
-                        <constraint firstAttribute="trailing" secondItem="1Wb-Qu-7U4" secondAttribute="trailing" id="sbE-59-CTG"/>
-                        <constraint firstItem="1Wb-Qu-7U4" firstAttribute="top" secondItem="rVd-eF-2Ph" secondAttribute="top" id="v21-99-ofF"/>
-                        <constraint firstItem="1Wb-Qu-7U4" firstAttribute="leading" secondItem="rVd-eF-2Ph" secondAttribute="leading" id="zAD-Ns-Xcq"/>
+                        <constraint firstAttribute="bottom" secondItem="K77-NA-IJy" secondAttribute="bottom" id="7rp-z4-wLo"/>
+                        <constraint firstAttribute="trailing" secondItem="K77-NA-IJy" secondAttribute="trailing" id="FIz-Lj-rmD"/>
+                        <constraint firstItem="K77-NA-IJy" firstAttribute="leading" secondItem="gU6-Ei-fS9" secondAttribute="leading" id="SyL-Ge-mmH"/>
+                        <constraint firstItem="K77-NA-IJy" firstAttribute="top" secondItem="gU6-Ei-fS9" secondAttribute="top" id="hlr-rM-kVC"/>
                     </constraints>
                 </view>
             </objects>
@@ -174,13 +186,14 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="FOm-ps-5Qe">
-                                <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
+                                <rect key="frame" x="0.0" y="20" width="600" height="580"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="FilterCell" id="y2f-Ek-lNa">
+                                        <rect key="frame" x="0.0" y="28" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="y2f-Ek-lNa" id="GOc-w6-DrK">
-                                            <rect key="frame" x="0.0" y="0.0" width="240" height="43"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -195,28 +208,6 @@
                             <constraint firstAttribute="trailing" secondItem="FOm-ps-5Qe" secondAttribute="trailing" id="ufP-3I-jXP"/>
                             <constraint firstItem="FOm-ps-5Qe" firstAttribute="leading" secondItem="nyA-dx-DFP" secondAttribute="leading" id="ujL-QA-cjf"/>
                         </constraints>
-                        <variation key="default">
-                            <mask key="subviews">
-                                <exclude reference="FOm-ps-5Qe"/>
-                            </mask>
-                            <mask key="constraints">
-                                <exclude reference="6ic-sk-VtB"/>
-                                <exclude reference="64f-77-5CR"/>
-                                <exclude reference="ufP-3I-jXP"/>
-                                <exclude reference="ujL-QA-cjf"/>
-                            </mask>
-                        </variation>
-                        <variation key="heightClass=regular-widthClass=regular">
-                            <mask key="subviews">
-                                <include reference="FOm-ps-5Qe"/>
-                            </mask>
-                            <mask key="constraints">
-                                <include reference="6ic-sk-VtB"/>
-                                <include reference="64f-77-5CR"/>
-                                <include reference="ufP-3I-jXP"/>
-                                <include reference="ujL-QA-cjf"/>
-                            </mask>
-                        </variation>
                     </view>
                     <connections>
                         <outlet property="tableView" destination="FOm-ps-5Qe" id="3eq-EL-A87"/>

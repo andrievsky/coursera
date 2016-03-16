@@ -13,20 +13,18 @@ struct RGBPixel {
 }
 
 class GaussianBlurFilter:Filtering{
-    let minValue:Float = 0.1
-    let maxValue:Float = 1
-    let value:Int
-    var width:Int = 0
-    var height:Int = 0
-    init(value:Float){
-        self.value = Int(min(maxValue, max(minValue, value)) * 3) + 1
-    }
-    
-    func processImage(inout image:RGBAImage) {
-        width = image.width
-        height = image.height
+    static let MIN_VALUE:Float = 0.0
+    static let MAX_VALUE:Float = 1.0
+    static let DEFAULT_VALUE:Float = 0.2
+    static let TITLE = "Gaussian Blur"
+
+    func processImage(inout image:RGBAImage, adjustment:Float?){
+        let width = image.width
+        let height = image.height
+        let value = Int(10 * min(GaussianBlurFilter.MAX_VALUE, max(GaussianBlurFilter.MIN_VALUE, adjustment ?? GaussianBlurFilter.DEFAULT_VALUE)))
         let emptyPixel = RGBPixel(red: 0, green: 0, blue: 0)
         var newPixels:[RGBPixel] = [RGBPixel](count: image.pixels.count, repeatedValue: emptyPixel)
+        
         var count:Int = 0
         var neighborPixel:Pixel?
         var neighborIndex:Int = 0
@@ -49,7 +47,7 @@ class GaussianBlurFilter:Filtering{
                         if neighborX < 0 || neighborX >= width || neighborY < 0 || neighborY >= height{
                             continue
                         }
-                        neighborIndex = getIndex(neighborX, y: neighborY)
+                        neighborIndex = neighborX + width * neighborY
                         neighborPixel = image.pixels[neighborIndex]
                         if (neighborPixel != nil){
                             red += Int(neighborPixel!.red)
@@ -73,10 +71,6 @@ class GaussianBlurFilter:Filtering{
             image.pixels[index].green = newPixels[index].green
             image.pixels[index].blue = newPixels[index].blue
         }
-    }
-    
-    func getIndex(x:Int, y:Int) -> Int{
-        return x + width * y
     }
     
 }

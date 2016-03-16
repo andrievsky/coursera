@@ -6,38 +6,67 @@
 //  Copyright © 2016 Nick Andrievsky. All rights reserved.
 //
 
+public protocol Filtering{
+    static var MIN_VALUE:Float {get}
+    static var MAX_VALUE:Float {get}
+    static var DEFAULT_VALUE:Float {get}
+    static var TITLE:String {get}
+    
+    func processImage(inout imafe:RGBAImage, adjustment:Float?)
+}
+
+public enum Filter{
+    case GaussianBlur, RedContrast
+    
+    public static func getTitle(filter:Filter) -> String{
+        switch filter{
+        case .RedContrast:
+            return RedContrastFilter.TITLE
+        case .GaussianBlur:
+            return GaussianBlurFilter.TITLE
+        default: return ""
+        }
+    }
+}
+
 import UIKit
 
-class ImageProcessor{
-    var image:RGBAImage
+public class ImageProcessor{
+    private var sourceImage:RGBAImage
+    private var filteredImage:RGBAImage
     
     init(image:UIImage){
-        self.image = RGBAImage(image: image)!
+        sourceImage = RGBAImage(image: image)!
+        filteredImage = RGBAImage(image: image)!
     }
     
-    let preset:[String: [Filtering]] = [
-        "Weak Red": [RedContrastFilter(value: 0.2)],
-        "Strong Red": [RedContrastFilter(value: 0.8)],
-        "Weak Blur": [GaussianBlurFilter(value: 0.2)],
-        "Strong Blur": [GaussianBlurFilter(value: 0.8)],
-        "Complex": [RedContrastFilter(value: 0.8), GaussianBlurFilter(value: 0.2)]
+    static public let FILTERS:[Filter: Filtering] = [
+        .RedContrast: RedContrastFilter(),
+        .GaussianBlur: GaussianBlurFilter()
     ]
     
-    func addFilter(name filterName:String) -> ImageProcessor{
-        if let filters = preset[filterName]{
-            for filter in filters{
-                addFilter(filter)
-            }
+    public func addFilter(preset filter:Filter){
+        if let aFilter = ImageProcessor.FILTERS[filter] {
+            addFilter(aFilter, adjustment: nil)
         }
-        return self
     }
     
-    func addFilter(filter:Filtering) -> ImageProcessor{
-        filter.processImage(&image)
-        return self
+    public func addFilter(preset filter:Filter, adjustment:Float){
+        if let aFilter = ImageProcessor.FILTERS[filter] {
+            addFilter(aFilter, adjustment: adjustment)
+        }
     }
     
-    func toUIImage() -> UIImage{
-        return image.toUIImage()!
+    public func addFilter(filter:Filtering, adjustment:Float?){
+        refreshImage()
+        filter.processImage(&filteredImage, adjustment: adjustment)
+    }
+    
+    public func toUIImage() -> UIImage{
+        return filteredImage.toUIImage()!
+    }
+    
+    private func refreshImage(){
+        filteredImage = RGBAImage(image: sourceImage.toUIImage()!)!
     }
 }
