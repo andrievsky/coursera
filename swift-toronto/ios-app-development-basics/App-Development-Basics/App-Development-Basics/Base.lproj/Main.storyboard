@@ -130,6 +130,7 @@
                         <outlet property="editButton" destination="Sy0-zl-Ttv" id="clN-sp-zm6"/>
                         <outlet property="editView" destination="PWM-9r-lEG" id="7lP-b5-w9D"/>
                         <outlet property="filterButton" destination="DgF-Un-1Eg" id="eJ9-qR-kuF"/>
+                        <outlet property="filtersCollectionView" destination="K77-NA-IJy" id="EB2-o8-4nQ"/>
                         <outlet property="filtersView" destination="gU6-Ei-fS9" id="fx9-8Y-RUf"/>
                         <outlet property="overlayLabel" destination="pby-xc-d78" id="kmh-gv-oNN"/>
                         <outlet property="processedImageView" destination="TBP-ZQ-brk" id="9Pq-ir-bvK"/>
@@ -204,7 +205,7 @@
                             </connections>
                         </slider>
                     </subviews>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstItem="IsM-6S-2fq" firstAttribute="centerX" secondItem="PWM-9r-lEG" secondAttribute="centerX" id="GE2-AI-56D"/>
                         <constraint firstItem="IsM-6S-2fq" firstAttribute="centerY" secondItem="PWM-9r-lEG" secondAttribute="centerY" id="OcY-5i-VIz"/>

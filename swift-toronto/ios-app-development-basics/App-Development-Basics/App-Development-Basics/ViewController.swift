@@ -22,17 +22,16 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet var shareButton: UIButton!
     @IBOutlet var filtersView: UIView!
     @IBOutlet var overlayLabel: UILabel!
+    @IBOutlet var filtersCollectionView: UICollectionView!
     
     
     var state:ImageState = ImageState()
-    var imageProcessor = ImageProcessor(image: UIImage(named: "nong-khai")!)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
 
         sourceImageView.image = UIImage(named: "nong-khai")
-       
         processedImageView.delegate = self
         state.delegate = self
         state.update()
@@ -48,89 +47,32 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     // States Handling
     
     func changedState(state: ImageStateProperty, previousState: ImageStateProperty) {
-        print("\(state) <- \(previousState)")
-        shareButton?.enabled = processedImageView.isReady()
-        compareButton?.enabled = processedImageView.isReady()
-        compareButton.selected = state == .Compare
-        processedImageView?.hidden = state == .Init
-        overlayLabel.hidden = state == .Init
-        filterButton.selected = state == .Filters
-        editButton.selected = state == .Edit
-
-        if previousState == .Compare {
-            processedImageView.show()
-        }
-        
+        //print("\(state) <- \(previousState)")
         switch state {
         case .Init:
-            return
+            if additionalView.isOpen(){
+                additionalView.close()
+            }
+            processedImageView.recreate(sourceImageView.image!)
+            overlayLabel.hidden = true
+            filtersCollectionView.reloadData()
+            compareButton.selected = false
         case .Ready:
             if additionalView.isOpen(){
                 additionalView.close()
             }
+        case .Edit:
+            additionalView!.open(editView)
         case .Filters:
-            return
-        case .Compare:
-            processedImageView.hide()
-        default: return
-        }
-    }
-    
-    // Image View Delegate
-    
-    func processedImageViewHide(view: ProcessedImageView) {
-        overlayLabel.hidden = false
-    }
-    
-    func processedImageViewShow(view: ProcessedImageView) {
-        overlayLabel.hidden = true
-    }
-    
-    // Filters Handling
-    
-    @IBAction func onFilter(sender: UIButton) {
-        if(sender.selected){
-            state.change(.Ready)
-        } else {
             additionalView!.open(filtersView)
-            state.change(.Filters)
         }
-    }
-    
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int{
-        return ImageProcessor.FILTERS.count
-    }
-    
-    let filtersList = [
-        Filter.RedContrast,
-        Filter.GaussianBlur
-    
-    ]
-    
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell{
-        let cellView:UICollectionViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("FilterViewCell", forIndexPath: indexPath)
         
-        var image = UIImage(named: "nong-khai")
-        let size = CGSize(width: 80, height: 80)
-        image = ImageUtil.resize(&image!, sizeChange: size)
-        let imageProcessor = ImageProcessor(image: image!)
-        let filter = filtersList[indexPath.row]
-        imageProcessor.addFilter(preset: filter)
-        (cellView as! FilterViewCell).imageView.image = imageProcessor.toUIImage()
-        (cellView as! FilterViewCell).title.text = Filter.getTitle(filter)
-        
-        return cellView
-        
-    }
-    
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath){
-        imageProcessor.addFilter(preset: filtersList[indexPath.row])
-        updateProcessedImage()
-        state.change(.Ready)
-    }
-    
-    func updateProcessedImage(){
-        processedImageView.image = imageProcessor.toUIImage()
+        shareButton?.enabled = processedImageView.hasFilter()
+        compareButton?.enabled = processedImageView.hasFilter()
+        editButton?.enabled = processedImageView.hasFilter()
+        processedImageView?.hidden = state == .Init
+        filterButton.selected = state == .Filters
+        editButton.selected = state == .Edit
     }
     
     // New Photo Menu and Delegate
@@ -165,21 +107,100 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         dismissViewControllerAnimated(true, completion: nil)
-        processedImageView.image = info[UIImagePickerControllerOriginalImage] as? UIImage
-        state.change(.Ready)
+        let image = info[UIImagePickerControllerOriginalImage] as? UIImage
+        sourceImageView.image = image
+        state.change(.Init)
     }
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
         dismissViewControllerAnimated(true, completion: nil)
     }
     
+    // Filters Handling
+    
+    @IBAction func onFilter(sender: UIButton) {
+        if(sender.selected){
+            state.change(.Ready)
+        } else {
+            state.change(.Filters)
+        }
+    }
+    
+    let filtersList = [
+        Filter.RedContrast,
+        Filter.GaussianBlur,
+        Filter.RedContrast,
+        Filter.GaussianBlur,
+        Filter.RedContrast,
+        Filter.GaussianBlur,
+        Filter.RedContrast,
+        Filter.GaussianBlur,
+        Filter.RedContrast,
+        Filter.GaussianBlur
+    ]
+    
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int{
+        return filtersList.count
+    }
+    
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell{
+        let cellView:UICollectionViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("FilterViewCell", forIndexPath: indexPath)
+        
+        var image = sourceImageView.image
+        let size = CGSize(width: 80, height: 80)
+        image = ImageUtil.resize(&image!, sizeChange: size)
+        let imageProcessor = ImageProcessor(image: image!)
+        let filter = filtersList[indexPath.row]
+        imageProcessor.addFilter(preset: filter)
+        (cellView as! FilterViewCell).imageView.image = imageProcessor.toUIImage()
+        (cellView as! FilterViewCell).title.text = Filter.getTitle(filter)
+        
+        return cellView
+        
+    }
+    
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath){
+        processedImageView.applyFilter(filtersList[indexPath.row])
+        state.change(.Ready)
+    }
+    
+    // Edit Handling
+    
+    @IBAction func onEdit(sender: UIButton) {
+        if(sender.selected){
+            state.change(.Ready)
+        } else {
+            state.change(.Edit)
+        }
+    }
+    
+    @IBAction func onEditChaged(sender: UISlider) {
+        processedImageView.adjust(sender.value)
+    }
+    
+    // Image View Delegate
+    
+    func processedImageViewHide(view: ProcessedImageView) {
+        if processedImageView.hasFilter() {
+            overlayLabel.hidden = false
+        }
+    }
+    
+    func processedImageViewShow(view: ProcessedImageView) {
+        if processedImageView.hasFilter() {
+            overlayLabel.hidden = true
+        }
+    }
+    
     // Compare Handling
     
     @IBAction func onCompare(sender: UIButton) {
         if(sender.selected){
-            state.change(.Ready)
+            compareButton.selected = false
+            processedImageView.show()
         } else {
-            state.change(.Compare)
+            compareButton.selected = true
+            processedImageView.hide()
         }
     }
     
@@ -190,21 +211,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         activityController.popoverPresentationController?.sourceView = sender
         activityController.popoverPresentationController?.sourceRect = sender.bounds
         presentViewController(activityController, animated: true, completion: nil)
-    }
-    
-    // Edit Handling
-    
-    @IBAction func onEdit(sender: UIButton) {
-        if(sender.selected){
-            state.change(.Ready)
-        } else {
-            additionalView!.open(editView)
-            state.change(.Edit)
-        }
-    }
-
-    @IBAction func onEditChaged(sender: UISlider) {
-        print(sender.value)
     }
 }
 

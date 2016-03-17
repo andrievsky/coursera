@@ -10,10 +10,42 @@ import UIKit
 public class ProcessedImageView: UIImageView {
     
     public var delegate:ProcessedImageViewDelegate?
+    private var imageProcessor:ImageProcessor?
+    private var filter:Filter?
+    private var value:Float = 0.0
 
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         userInteractionEnabled = true
+    }
+    
+    public func recreate(image:UIImage){
+        filter = nil
+        self.image = image
+        imageProcessor = ImageProcessor(image: image)
+    }
+    
+    public func applyFilter(filter:Filter){
+        self.filter = filter
+        imageProcessor?.addFilter(preset: filter)
+        updateImage()
+    }
+    
+    public func adjust(value:Float){
+        if filter == nil{
+            return
+        }
+        let newValue = Float(round(10*value)/10)
+        if self.value == newValue {
+            return
+        }
+        self.value = newValue
+        imageProcessor?.addFilter(preset: filter!, adjustment: newValue)
+        updateImage()
+    }
+    
+    private func updateImage(){
+        image = imageProcessor?.toUIImage()
     }
     
     override public func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -38,12 +70,8 @@ public class ProcessedImageView: UIImageView {
         delegate?.processedImageViewHide(self)
     }
     
-    public func isReady() -> Bool{
-        return image != nil
-    }
-    
-    public func clear(){
-        image = nil
+    public func hasFilter() -> Bool{
+        return filter != nil
     }
 
 }

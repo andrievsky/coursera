@@ -7,7 +7,7 @@
 //
 
 public enum ImageStateProperty {
-    case Init, Ready, Filters, Edit, Compare
+    case Init, Ready, Filters, Edit
 }
 
 public protocol ImageStateDelegate {
